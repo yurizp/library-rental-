@@ -9,7 +9,8 @@
   
 ## Good to know  
   
-#### Sonar:  
+#### Sonar: 
+
 O projeto executa o sonar a cada commit nas branchs do projeto o [link](https://sonarcloud.io/dashboard?id=yurizp_library-rental) do projeto.  
   
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=yurizp_library-rental&metric=coverage)](https://sonarcloud.io/dashboard?id=yurizp_library-rental)  
