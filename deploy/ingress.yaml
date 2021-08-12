@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: library-rental-ingress
+spec:
+  rules:
+  - host: library-rental.yurizp.info
+    http:
+      paths:
+      - backend:
+          serviceName: library-rental
+          servicePort: 80
+
+  - host: library.yurizp.info
+    http:
+      paths:
+      - backend:
+          serviceName: library-rental
+          servicePort: 80
