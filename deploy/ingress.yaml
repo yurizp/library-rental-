@@ -3,15 +3,12 @@ kind: Ingress
 metadata:
   name: library-rental-ingress
 spec:
+  tls:
+    - hosts:
+      - yurizp.com
+      secretName: tls-secret
   rules:
-  - host: library-rental.yurizp.info
-    http:
-      paths:
-      - backend:
-          serviceName: library-rental
-          servicePort: 80
-
-  - host: library.yurizp.info
+  - host: library-rental.yurizp.com
     http:
       paths:
       - backend:
