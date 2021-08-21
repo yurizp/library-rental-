@@ -4,14 +4,18 @@ import com.agriness.libraryrental.dto.BookSummaryDto;
 import com.agriness.libraryrental.dto.RentalBookSummaryDto;
 import com.agriness.libraryrental.dto.TaxDto;
 import com.agriness.libraryrental.service.RentalBookService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import utils.ResourceUtils;
 
 import java.time.LocalDate;
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WebMvcTest
 @ContextConfiguration(classes = ClientController.class)
+@WithMockUser(username = "user", roles = {"user", "library-rental"})
 class ClientControllerTest {
 
     @Autowired
@@ -34,6 +39,14 @@ class ClientControllerTest {
 
     @MockBean
     private RentalBookService service;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @BeforeEach
+    public void setup() {
+        client = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
 
     @Test
     void shouldReturnAllReservedBooks() throws Exception {
@@ -49,7 +62,7 @@ class ClientControllerTest {
         return RentalBookSummaryDto.builder()
                 .tax(createTaxDto())
                 .bookSummary(createBookSummaryDto())
-                .renteDate(LocalDate.of(2020,12,3))
+                .renteDate(LocalDate.of(2020, 12, 3))
                 .build();
     }
 

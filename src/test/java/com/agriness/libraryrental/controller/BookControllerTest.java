@@ -6,14 +6,18 @@ import com.agriness.libraryrental.dto.RentalBookDto;
 import com.agriness.libraryrental.enums.StatusEnum;
 import com.agriness.libraryrental.service.BookService;
 import com.agriness.libraryrental.service.RentalBookService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import utils.ResourceUtils;
 
 import java.util.Arrays;
@@ -29,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WebMvcTest
 @ContextConfiguration(classes = BookController.class)
+@WithMockUser(username = "user", roles = {"user", "library-rental"})
 class BookControllerTest {
 
     @Autowired
@@ -39,6 +44,14 @@ class BookControllerTest {
 
     @MockBean
     private RentalBookService rentalBookService;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @BeforeEach
+    public void setup() {
+        client = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
 
     @Test
     void shouldReturnAllBooks() throws Exception {
@@ -51,10 +64,19 @@ class BookControllerTest {
     }
 
     @Test
+    void shouldReturUnauthorizedWhenNotSendTokenToGetAllBooks() throws Exception {
+        String response = ResourceUtils.loadResourceAsString("json/book/get-all-books.json");
+        when(service.getAllBook()).thenReturn(Arrays.asList(createBookDto()));
+        client.perform(get("/v1/books")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(200))
+                .andExpect(content().json(response));
+    }
+
+    @Test
     void shouldReserve() throws Exception {
         client.perform(post("/v1/books/123/reserve/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"clientId\":333}"))
                 .andExpect(status().is(202));
         verify(rentalBookService).rentBook(eq(123L), eq(333L));
@@ -63,8 +85,7 @@ class BookControllerTest {
     @Test
     void shouldReturnBook() throws Exception {
         client.perform(post("/v1/books/123/return/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"clientId\":333}"))
                 .andExpect(status().is(202));
         verify(rentalBookService).returnRentedBook(eq(123L), eq(333L));

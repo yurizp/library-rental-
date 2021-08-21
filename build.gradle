@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.liquibase:liquibase-core'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation group: 'com.c4-soft.springaddons', name: 'spring-security-oauth2-test-webmvc-addons', version: '2.3.4'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

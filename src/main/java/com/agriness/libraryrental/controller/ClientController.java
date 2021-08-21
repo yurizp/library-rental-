@@ -37,8 +37,7 @@ public class ClientController {
                     "<p>|  2  | Maria  |</p>\n" +
                     "<p>|  3  | Betina |</p>")
     public ResponseEntity<List<RentalBookSummaryDto>> reserveBook(@PathVariable Long clientId) {
-        List<RentalBookSummaryDto> rentalBooksDtos = service.
-                getRentalBooksByClientId(clientId);
+        List<RentalBookSummaryDto> rentalBooksDtos = service.getRentalBooksByClientId(clientId);
         return ResponseEntity.ok(rentalBooksDtos);
     }
 }
